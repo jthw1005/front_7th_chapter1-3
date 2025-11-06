@@ -30,8 +30,8 @@ export default defineConfig({
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
   /* Global setup and teardown */
-  globalSetup: './src/__tests__/e2e/global-setup.ts',
-  globalTeardown: './src/__tests__/e2e/global-teardown.ts',
+  // globalSetup: './src/__tests__/e2e/global-setup.ts',
+  // globalTeardown: './src/__tests__/e2e/global-teardown.ts',
   testMatch: /(.+\.)?(test|spec)\.[jt]s/,
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
@@ -48,25 +48,28 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'setup',
-      testMatch: /project-setup\.ts/,
+      name: 'setup db',
+      testMatch: /global\.setup\.ts/,
+      teardown: 'cleanup db',
+    },
+    {
+      name: 'cleanup db',
+      testMatch: /global\.teardown\.ts/,
     },
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
-      dependencies: ['setup'],
+      dependencies: ['setup db'],
     },
-
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
-      dependencies: ['setup'],
+      dependencies: ['setup db'],
     },
-
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
-      dependencies: ['setup'],
+      dependencies: ['setup db'],
     },
 
     /* Test against mobile viewports. */

@@ -11,13 +11,14 @@ const scheduleFilePath = path.join(__dirname, '../../__mocks__/response/realEven
 const backupFilePath = path.join(__dirname, '../../__mocks__/response/realEvents.backup.json');
 
 setup('데이터 백업', async () => {
+  console.log('setup test database...');
   // 이전 백업 파일이 있으면 삭제 (이전 테스트 실행의 잔여물)
-  if (fs.existsSync(backupFilePath)) {
-    fs.unlinkSync(backupFilePath);
-  }
+  // if (fs.existsSync(backupFilePath)) {
+  //   fs.unlinkSync(backupFilePath);
+  // }
 
-  // 원본 데이터 백업
-  const originalData = fs.readFileSync(scheduleFilePath, 'utf-8');
-  fs.writeFileSync(backupFilePath, originalData);
-  console.log('📦 원본 데이터 백업 완료 (setup project)');
+  // // 원본 데이터 백업
+  // const originalData = fs.readFileSync(scheduleFilePath, 'utf-8');
+  // fs.writeFileSync(backupFilePath, originalData);
+  // console.log('📦 원본 데이터 백업 완료 (setup project)');
 });
