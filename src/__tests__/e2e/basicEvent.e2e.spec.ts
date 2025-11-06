@@ -5,10 +5,6 @@ test.describe('기본 일정 관리 E2E 테스트', () => {
     await page.goto('/');
   });
 
-  test('기존 일정을 확인할 수 있다.', async ({ page }) => {
-    await expect(page.getByTestId('event-list')).toContainText('팀 회의');
-  });
-
   test('새로운 일정을 생성할 수 있다.', async ({ page }) => {
     await page.getByRole('textbox', { name: '제목' }).click();
     await page.getByRole('textbox', { name: '제목' }).fill('영화보기');
@@ -40,17 +36,21 @@ test.describe('기본 일정 관리 E2E 테스트', () => {
     await expect(page.getByTestId('event-list')).toContainText('영화보기');
   });
 
+  test('기존 일정을 확인할 수 있다.', async ({ page }) => {
+    await expect(page.getByTestId('event-list')).toContainText('영화보기');
+  });
+
   test('기존 일정을 수정할 수 있다.', async ({ page }) => {
     await page
       .getByTestId('event-list')
       .locator('div')
-      .filter({ hasText: '점심 약속' })
+      .filter({ hasText: '영화보기' })
       .getByRole('button', { name: 'Edit event' })
       .first()
       .click();
 
     await page.getByRole('textbox', { name: '제목' }).click();
-    await page.getByRole('textbox', { name: '제목' }).fill('저녁 약속');
+    await page.getByRole('textbox', { name: '제목' }).fill('뮤지컬보기');
 
     await page.getByRole('textbox', { name: '시작 시간' }).click();
     await page.getByRole('textbox', { name: '시작 시간' }).fill('18:00');
@@ -62,20 +62,20 @@ test.describe('기본 일정 관리 E2E 테스트', () => {
 
     await expect(page.getByRole('alert').last()).toContainText('일정이 수정되었습니다');
 
-    await expect(page.getByTestId('event-list')).toContainText('저녁 약속');
+    await expect(page.getByTestId('event-list')).toContainText('뮤지컬보기');
   });
 
   test('기존 일정을 삭제할 수 있다.', async ({ page }) => {
     await page
       .getByTestId('event-list')
       .locator('div')
-      .filter({ hasText: '생일 파티' })
+      .filter({ hasText: '뮤지컬보기' })
       .getByRole('button', { name: 'Delete event' })
       .first()
       .click();
 
     await expect(page.getByRole('alert').last()).toContainText('일정이 삭제되었습니다');
 
-    await expect(page.getByTestId('event-list')).not.toContainText('생일 파티');
+    await expect(page.getByTestId('event-list')).not.toContainText('뮤지컬보기');
   });
 });

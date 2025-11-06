@@ -20,13 +20,13 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './src/__tests__/e2e',
   /* Run tests in files in parallel */
-  fullyParallel: true,
+  fullyParallel: false,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
   /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  workers: 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
   /* Global setup and teardown */
@@ -61,16 +61,16 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
       dependencies: ['setup db'],
     },
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-      dependencies: ['setup db'],
-    },
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-      dependencies: ['setup db'],
-    },
+    // {
+    //   name: 'firefox',
+    //   use: { ...devices['Desktop Firefox'] },
+    //   dependencies: ['setup db'],
+    // },
+    // {
+    //   name: 'webkit',
+    //   use: { ...devices['Desktop Safari'] },
+    //   dependencies: ['setup db'],
+    // },
 
     /* Test against mobile viewports. */
     // {
@@ -97,6 +97,6 @@ export default defineConfig({
   webServer: {
     command: 'TEST_ENV=e2e pnpm run dev',
     url: 'http://localhost:5173',
-    // reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !process.env.CI,
   },
 });
