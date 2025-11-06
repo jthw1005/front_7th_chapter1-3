@@ -81,64 +81,78 @@ const EventView = ({
             <TableHeader />
             <TableBody>
               <TableRow>
-                {weekDates.map((date) => (
-                  <TableCell
-                    key={date.toISOString()}
-                    sx={{
-                      height: '120px',
-                      verticalAlign: 'top',
-                      width: '14.28%',
-                      padding: 1,
-                      border: '1px solid #e0e0e0',
-                      overflow: 'hidden',
-                    }}
-                  >
-                    <Typography variant="body2" fontWeight="bold">
-                      {date.getDate()}
-                    </Typography>
-                    {filteredEvents
-                      .filter(
-                        (event) => new Date(event.date).toDateString() === date.toDateString()
-                      )
-                      .map((event) => {
-                        const isNotified = notifiedEvents.includes(event.id);
-                        const isRepeating = event.repeat.type !== 'none';
+                {weekDates.map((date) => {
+                  const droppableId = `${date.getDate()}`;
 
-                        return (
-                          <Box
-                            key={event.id}
-                            sx={{
-                              ...eventBoxStyles.common,
-                              ...(isNotified ? eventBoxStyles.notified : eventBoxStyles.normal),
-                            }}
-                          >
-                            <Stack direction="row" spacing={1} alignItems="center">
-                              {isNotified && <Notifications fontSize="small" />}
-                              {/* ! TEST CASE */}
-                              {isRepeating && (
-                                <Tooltip
-                                  title={`${event.repeat.interval}${getRepeatTypeLabel(
-                                    event.repeat.type
-                                  )}마다 반복${
-                                    event.repeat.endDate ? ` (종료: ${event.repeat.endDate})` : ''
-                                  }`}
-                                >
-                                  <Repeat fontSize="small" />
-                                </Tooltip>
-                              )}
-                              <Typography
-                                variant="caption"
-                                noWrap
-                                sx={{ fontSize: '0.75rem', lineHeight: 1.2 }}
-                              >
-                                {event.title}
-                              </Typography>
-                            </Stack>
-                          </Box>
-                        );
-                      })}
-                  </TableCell>
-                ))}
+                  return (
+                    <TableCell
+                      key={date.toISOString()}
+                      sx={{
+                        height: '120px',
+                        verticalAlign: 'top',
+                        width: '14.28%',
+                        padding: 1,
+                        border: '1px solid #e0e0e0',
+                        position: 'relative',
+                      }}
+                    >
+                      <Droppable id={droppableId}>
+                        <>
+                          <Typography variant="body2" fontWeight="bold">
+                            {date.getDate()}
+                          </Typography>
+                          {filteredEvents
+                            .filter(
+                              (event) => new Date(event.date).toDateString() === date.toDateString()
+                            )
+                            .map((event) => {
+                              const isNotified = notifiedEvents.includes(event.id);
+                              const isRepeating = event.repeat.type !== 'none';
+
+                              return (
+                                <Draggable id={event.id}>
+                                  <Box
+                                    key={event.id}
+                                    sx={{
+                                      ...eventBoxStyles.common,
+                                      ...(isNotified
+                                        ? eventBoxStyles.notified
+                                        : eventBoxStyles.normal),
+                                    }}
+                                  >
+                                    <Stack direction="row" spacing={1} alignItems="center">
+                                      {isNotified && <Notifications fontSize="small" />}
+                                      {/* ! TEST CASE */}
+                                      {isRepeating && (
+                                        <Tooltip
+                                          title={`${event.repeat.interval}${getRepeatTypeLabel(
+                                            event.repeat.type
+                                          )}마다 반복${
+                                            event.repeat.endDate
+                                              ? ` (종료: ${event.repeat.endDate})`
+                                              : ''
+                                          }`}
+                                        >
+                                          <Repeat fontSize="small" />
+                                        </Tooltip>
+                                      )}
+                                      <Typography
+                                        variant="caption"
+                                        noWrap
+                                        sx={{ fontSize: '0.75rem', lineHeight: 1.2 }}
+                                      >
+                                        {event.title}
+                                      </Typography>
+                                    </Stack>
+                                  </Box>
+                                </Draggable>
+                              );
+                            })}
+                        </>
+                      </Droppable>
+                    </TableCell>
+                  );
+                })}
               </TableRow>
             </TableBody>
           </Table>
