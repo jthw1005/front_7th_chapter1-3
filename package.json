@@ -14,7 +14,8 @@
     "build": "tsc -b && vite build",
     "lint:eslint": "eslint . --ext ts,tsx --report-unused-disable-directives",
     "lint:tsc": "tsc --pretty",
-    "lint": "pnpm lint:eslint && pnpm lint:tsc"
+    "lint": "pnpm lint:eslint && pnpm lint:tsc",
+    "playwright": "TEST_ENV=e2e pnpm exec playwright test --headed"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
