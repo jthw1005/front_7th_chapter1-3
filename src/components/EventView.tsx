@@ -1,4 +1,4 @@
-import { DndContext, DragEndEvent, useDraggable, useDroppable } from '@dnd-kit/core';
+import { DndContext, DragEndEvent } from '@dnd-kit/core';
 import { ChevronLeft, ChevronRight, Notifications, Repeat } from '@mui/icons-material';
 import {
   Box,
@@ -15,9 +15,10 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import { ReactNode } from 'react';
 
 import { Event } from '../types.ts';
+import Draggable from './Draggable.tsx';
+import Droppable from './Droppable.tsx';
 import {
   formatDate,
   formatMonth,
@@ -280,7 +281,7 @@ const EventView = ({
         </IconButton>
       </Stack>
 
-      <DndContext onDragEnd={handleDragEnd}>
+      <DndContext onDragEnd={handleDragEnd} autoScroll={false}>
         {view === 'week' && renderWeekView()}
         {view === 'month' && renderMonthView()}
       </DndContext>
@@ -301,49 +302,5 @@ const TableHeader = () => {
         ))}
       </TableRow>
     </TableHead>
-  );
-};
-
-const Droppable = ({ children, id }: { children: ReactNode; id: string }) => {
-  const { isOver, setNodeRef } = useDroppable({ id });
-  const style = {
-    color: isOver ? 'green' : undefined,
-    backgroundColor: isOver ? '#ffebee' : undefined,
-    border: '1px solid red',
-    width: '100%',
-    height: '100%',
-    zIndex: 0,
-  };
-
-  return (
-    <div ref={setNodeRef} style={style}>
-      {children}
-    </div>
-  );
-};
-
-const Draggable = ({ children, id }: { children: ReactNode; id: string }) => {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id,
-  });
-  const style = transform
-    ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-        border: '1px solid blue',
-        cursor: 'grabbing',
-        zIndex: 1000,
-        position: 'relative' as const,
-      }
-    : {
-        border: '1px solid green',
-        cursor: 'grab',
-        position: 'relative' as const,
-        zIndex: 1,
-      };
-
-  return (
-    <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
-      {children}
-    </div>
   );
 };
