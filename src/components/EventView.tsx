@@ -61,6 +61,7 @@ const EventView = ({
   navigate,
   setView,
   onEventUpdate,
+  onDateClick,
 }: {
   currentDate: Date;
   filteredEvents: Event[];
@@ -70,6 +71,7 @@ const EventView = ({
   navigate: (direction: 'prev' | 'next') => void;
   setView: (view: 'week' | 'month') => void;
   onEventUpdate: (event: Event) => void;
+  onDateClick?: (date: string) => void;
 }) => {
   const renderWeekView = () => {
     const weekDates = getWeekDates(currentDate);
@@ -84,6 +86,12 @@ const EventView = ({
                 {weekDates.map((date) => {
                   const droppableId = formatDate(date, date.getDate());
 
+                  const handleClickDay = () => {
+                    if (onDateClick) {
+                      onDateClick(droppableId);
+                    }
+                  };
+
                   return (
                     <TableCell
                       key={date.toISOString()}
@@ -94,7 +102,9 @@ const EventView = ({
                         padding: 1,
                         border: '1px solid #e0e0e0',
                         position: 'relative',
+                        cursor: 'pointer',
                       }}
+                      onClick={handleClickDay}
                     >
                       <Droppable id={droppableId}>
                         <>
@@ -178,6 +188,12 @@ const EventView = ({
                     const holiday = holidays[dateString];
                     const droppableId = dateString;
 
+                    const handleClickDay = () => {
+                      if (dateString && onDateClick) {
+                        onDateClick(dateString);
+                      }
+                    };
+
                     return (
                       <TableCell
                         key={dayIndex}
@@ -188,7 +204,9 @@ const EventView = ({
                           padding: 1,
                           border: '1px solid #e0e0e0',
                           position: 'relative',
+                          cursor: day ? 'pointer' : 'default',
                         }}
+                        onClick={handleClickDay}
                       >
                         {day ? (
                           <Droppable id={droppableId}>

@@ -445,6 +445,7 @@ function App() {
           navigate={navigate}
           setView={setView}
           onEventUpdate={updateEvent}
+          onDateClick={setDate}
         />
 
         <EventList
