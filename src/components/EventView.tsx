@@ -1,3 +1,4 @@
+import { DndContext, DragEndEvent, useDraggable, useDroppable } from '@dnd-kit/core';
 import { ChevronLeft, ChevronRight, Notifications, Repeat } from '@mui/icons-material';
 import {
   Box,
@@ -14,6 +15,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
+import { ReactNode } from 'react';
 
 import { Event } from '../types.ts';
 import {
@@ -28,7 +30,6 @@ import { getRepeatTypeLabel } from '../utils/textMapper.ts';
 
 const weekDays = ['일', '월', '화', '수', '목', '금', '토'];
 
-// 스타일 상수
 const eventBoxStyles = {
   notified: {
     backgroundColor: '#ffebee',
@@ -74,15 +75,7 @@ const EventView = ({
         <Typography variant="h5">{formatWeek(currentDate)}</Typography>
         <TableContainer>
           <Table sx={{ tableLayout: 'fixed', width: '100%' }}>
-            <TableHead>
-              <TableRow>
-                {weekDays.map((day) => (
-                  <TableCell key={day} sx={{ width: '14.28%', padding: 1, textAlign: 'center' }}>
-                    {day}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
+            <TableHeader />
             <TableBody>
               <TableRow>
                 {weekDates.map((date) => (
@@ -159,21 +152,14 @@ const EventView = ({
         <Typography variant="h5">{formatMonth(currentDate)}</Typography>
         <TableContainer>
           <Table sx={{ tableLayout: 'fixed', width: '100%' }}>
-            <TableHead>
-              <TableRow>
-                {weekDays.map((day) => (
-                  <TableCell key={day} sx={{ width: '14.28%', padding: 1, textAlign: 'center' }}>
-                    {day}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
+            <TableHeader />
             <TableBody>
               {weeks.map((week, weekIndex) => (
                 <TableRow key={weekIndex}>
                   {week.map((day, dayIndex) => {
                     const dateString = day ? formatDate(currentDate, day) : '';
                     const holiday = holidays[dateString];
+                    const droppableId = `${day}`;
 
                     return (
                       <TableCell
@@ -184,68 +170,71 @@ const EventView = ({
                           width: '14.28%',
                           padding: 1,
                           border: '1px solid #e0e0e0',
-                          overflow: 'hidden',
                           position: 'relative',
                         }}
                       >
-                        {day && (
-                          <>
-                            <Typography variant="body2" fontWeight="bold">
-                              {day}
-                            </Typography>
-                            {holiday && (
-                              <Typography variant="body2" color="error">
-                                {holiday}
+                        {day ? (
+                          <Droppable id={droppableId}>
+                            <>
+                              <Typography variant="body2" fontWeight="bold">
+                                {day}
                               </Typography>
-                            )}
-                            {getEventsForDay(filteredEvents, day).map((event) => {
-                              const isNotified = notifiedEvents.includes(event.id);
-                              const isRepeating = event.repeat.type !== 'none';
+                              {holiday && (
+                                <Typography variant="body2" color="error">
+                                  {holiday}
+                                </Typography>
+                              )}
+                              {getEventsForDay(filteredEvents, day).map((event) => {
+                                const isNotified = notifiedEvents.includes(event.id);
+                                const isRepeating = event.repeat.type !== 'none';
 
-                              return (
-                                <Box
-                                  key={event.id}
-                                  sx={{
-                                    p: 0.5,
-                                    my: 0.5,
-                                    backgroundColor: isNotified ? '#ffebee' : '#f5f5f5',
-                                    borderRadius: 1,
-                                    fontWeight: isNotified ? 'bold' : 'normal',
-                                    color: isNotified ? '#d32f2f' : 'inherit',
-                                    minHeight: '18px',
-                                    width: '100%',
-                                    overflow: 'hidden',
-                                  }}
-                                >
-                                  <Stack direction="row" spacing={1} alignItems="center">
-                                    {isNotified && <Notifications fontSize="small" />}
-                                    {/* ! TEST CASE */}
-                                    {isRepeating && (
-                                      <Tooltip
-                                        title={`${event.repeat.interval}${getRepeatTypeLabel(
-                                          event.repeat.type
-                                        )}마다 반복${
-                                          event.repeat.endDate
-                                            ? ` (종료: ${event.repeat.endDate})`
-                                            : ''
-                                        }`}
-                                      >
-                                        <Repeat fontSize="small" />
-                                      </Tooltip>
-                                    )}
-                                    <Typography
-                                      variant="caption"
-                                      noWrap
-                                      sx={{ fontSize: '0.75rem', lineHeight: 1.2 }}
+                                return (
+                                  <Draggable id={event.id}>
+                                    <Box
+                                      key={event.id}
+                                      sx={{
+                                        p: 0.5,
+                                        my: 0.5,
+                                        backgroundColor: isNotified ? '#ffebee' : '#f5f5f5',
+                                        borderRadius: 1,
+                                        fontWeight: isNotified ? 'bold' : 'normal',
+                                        color: isNotified ? '#d32f2f' : 'inherit',
+                                        minHeight: '18px',
+                                        width: '100%',
+                                        overflow: 'hidden',
+                                      }}
                                     >
-                                      {event.title}
-                                    </Typography>
-                                  </Stack>
-                                </Box>
-                              );
-                            })}
-                          </>
-                        )}
+                                      <Stack direction="row" spacing={1} alignItems="center">
+                                        {isNotified && <Notifications fontSize="small" />}
+                                        {/* ! TEST CASE */}
+                                        {isRepeating && (
+                                          <Tooltip
+                                            title={`${event.repeat.interval}${getRepeatTypeLabel(
+                                              event.repeat.type
+                                            )}마다 반복${
+                                              event.repeat.endDate
+                                                ? ` (종료: ${event.repeat.endDate})`
+                                                : ''
+                                            }`}
+                                          >
+                                            <Repeat fontSize="small" />
+                                          </Tooltip>
+                                        )}
+                                        <Typography
+                                          variant="caption"
+                                          noWrap
+                                          sx={{ fontSize: '0.75rem', lineHeight: 1.2 }}
+                                        >
+                                          {event.title}
+                                        </Typography>
+                                      </Stack>
+                                    </Box>
+                                  </Draggable>
+                                );
+                              })}
+                            </>
+                          </Droppable>
+                        ) : null}
                       </TableCell>
                     );
                   })}
@@ -256,6 +245,13 @@ const EventView = ({
         </TableContainer>
       </Stack>
     );
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    if (event.over) {
+      // event.active.id => event id
+      // event.over.id => droppable id = date
+    }
   };
 
   return (
@@ -284,10 +280,70 @@ const EventView = ({
         </IconButton>
       </Stack>
 
-      {view === 'week' && renderWeekView()}
-      {view === 'month' && renderMonthView()}
+      <DndContext onDragEnd={handleDragEnd}>
+        {view === 'week' && renderWeekView()}
+        {view === 'month' && renderMonthView()}
+      </DndContext>
     </Stack>
   );
 };
 
 export default EventView;
+
+const TableHeader = () => {
+  return (
+    <TableHead>
+      <TableRow>
+        {weekDays.map((day) => (
+          <TableCell key={day} sx={{ width: '14.28%', padding: 1, textAlign: 'center' }}>
+            {day}
+          </TableCell>
+        ))}
+      </TableRow>
+    </TableHead>
+  );
+};
+
+const Droppable = ({ children, id }: { children: ReactNode; id: string }) => {
+  const { isOver, setNodeRef } = useDroppable({ id });
+  const style = {
+    color: isOver ? 'green' : undefined,
+    backgroundColor: isOver ? '#ffebee' : undefined,
+    border: '1px solid red',
+    width: '100%',
+    height: '100%',
+    zIndex: 0,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      {children}
+    </div>
+  );
+};
+
+const Draggable = ({ children, id }: { children: ReactNode; id: string }) => {
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id,
+  });
+  const style = transform
+    ? {
+        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+        border: '1px solid blue',
+        cursor: 'grabbing',
+        zIndex: 1000,
+        position: 'relative' as const,
+      }
+    : {
+        border: '1px solid green',
+        cursor: 'grab',
+        position: 'relative' as const,
+        zIndex: 1,
+      };
+
+  return (
+    <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
+      {children}
+    </div>
+  );
+};
