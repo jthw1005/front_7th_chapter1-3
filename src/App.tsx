@@ -1,15 +1,12 @@
 import {
   ChevronLeft,
   ChevronRight,
-  Close,
   Delete,
   Edit,
   Notifications,
   Repeat,
 } from '@mui/icons-material';
 import {
-  Alert,
-  AlertTitle,
   Box,
   Button,
   Checkbox,
@@ -38,6 +35,7 @@ import {
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
 
+import AlertsBox from './components/AlertsBox.tsx';
 import RecurringEventDialog from './components/RecurringEventDialog.tsx';
 import { useCalendarView } from './hooks/useCalendarView.ts';
 import { useEventForm } from './hooks/useEventForm.ts';
@@ -481,6 +479,12 @@ function App() {
     );
   };
 
+  const handleClickIconButton = (index: number) => {
+    setNotifications((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const isAlertsBoxOpen = notifications.length > 0;
+
   return (
     <Box sx={{ width: '100%', height: '100vh', margin: 'auto', p: 5 }}>
       <Stack direction="row" spacing={6} sx={{ height: '100%' }}>
@@ -842,27 +846,11 @@ function App() {
         mode={recurringDialogMode}
       />
 
-      {notifications.length > 0 && (
-        <Stack position="fixed" top={16} right={16} spacing={2} alignItems="flex-end">
-          {notifications.map((notification, index) => (
-            <Alert
-              key={index}
-              severity="info"
-              sx={{ width: 'auto' }}
-              action={
-                <IconButton
-                  size="small"
-                  onClick={() => setNotifications((prev) => prev.filter((_, i) => i !== index))}
-                >
-                  <Close />
-                </IconButton>
-              }
-            >
-              <AlertTitle>{notification.message}</AlertTitle>
-            </Alert>
-          ))}
-        </Stack>
-      )}
+      <AlertsBox
+        open={isAlertsBoxOpen}
+        notifications={notifications}
+        handleClickIconButton={handleClickIconButton}
+      />
     </Box>
   );
 }
