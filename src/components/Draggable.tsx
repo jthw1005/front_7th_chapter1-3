@@ -8,13 +8,11 @@ const Draggable = ({ children, id }: { children: ReactNode; id: string }) => {
   const style = transform
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-        border: '1px solid blue',
         cursor: 'grabbing',
         zIndex: 1000,
         position: 'relative' as const,
       }
     : {
-        border: '1px solid green',
         cursor: 'grab',
         position: 'relative' as const,
         zIndex: 1,

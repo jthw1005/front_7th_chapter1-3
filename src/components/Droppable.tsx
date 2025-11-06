@@ -4,9 +4,8 @@ import { ReactNode } from 'react';
 const Droppable = ({ children, id }: { children: ReactNode; id: string }) => {
   const { isOver, setNodeRef } = useDroppable({ id });
   const style = {
-    color: isOver ? 'green' : undefined,
-    backgroundColor: isOver ? '#ffebee' : undefined,
-    border: '1px solid red',
+    backgroundColor: isOver ? '#f1f1f1' : undefined,
+    borderRadius: 4,
     width: '100%',
     height: '100%',
     zIndex: 0,
