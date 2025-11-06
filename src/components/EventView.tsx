@@ -82,7 +82,7 @@ const EventView = ({
             <TableBody>
               <TableRow>
                 {weekDates.map((date) => {
-                  const droppableId = `${date.getDate()}`;
+                  const droppableId = formatDate(date, date.getDate());
 
                   return (
                     <TableCell
@@ -176,7 +176,7 @@ const EventView = ({
                   {week.map((day, dayIndex) => {
                     const dateString = day ? formatDate(currentDate, day) : '';
                     const holiday = holidays[dateString];
-                    const droppableId = `${day}`;
+                    const droppableId = dateString;
 
                     return (
                       <TableCell
@@ -267,14 +267,13 @@ const EventView = ({
   const handleDragEnd = (event: DragEndEvent) => {
     if (event.over) {
       const eventId = event.active.id as string;
-      const targetDay = event.over.id as string;
+      const newDate = event.over.id as string;
 
       const draggedEvent = filteredEvents.find((e) => e.id === eventId);
       if (!draggedEvent) {
         return;
       }
 
-      const newDate = formatDate(currentDate, Number(targetDay));
       if (draggedEvent.date === newDate) {
         return;
       }
