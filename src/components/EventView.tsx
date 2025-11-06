@@ -60,6 +60,7 @@ const EventView = ({
   holidays,
   navigate,
   setView,
+  onEventUpdate,
 }: {
   currentDate: Date;
   filteredEvents: Event[];
@@ -68,6 +69,7 @@ const EventView = ({
   holidays: { [key: string]: string };
   navigate: (direction: 'prev' | 'next') => void;
   setView: (view: 'week' | 'month') => void;
+  onEventUpdate: (event: Event) => void;
 }) => {
   const renderWeekView = () => {
     const weekDates = getWeekDates(currentDate);
@@ -250,8 +252,25 @@ const EventView = ({
 
   const handleDragEnd = (event: DragEndEvent) => {
     if (event.over) {
-      // event.active.id => event id
-      // event.over.id => droppable id = date
+      const eventId = event.active.id as string;
+      const targetDay = event.over.id as string;
+
+      const draggedEvent = filteredEvents.find((e) => e.id === eventId);
+      if (!draggedEvent) {
+        return;
+      }
+
+      const newDate = formatDate(currentDate, Number(targetDay));
+      if (draggedEvent.date === newDate) {
+        return;
+      }
+
+      const updatedEvent: Event = {
+        ...draggedEvent,
+        date: newDate,
+      };
+
+      onEventUpdate(updatedEvent);
     }
   };
 
