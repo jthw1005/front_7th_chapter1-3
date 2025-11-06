@@ -268,6 +268,11 @@ const EventView = ({
       const updatedEvent: Event = {
         ...draggedEvent,
         date: newDate,
+        repeat: {
+          type: 'none',
+          interval: 0,
+          endDate: '',
+        },
       };
 
       onEventUpdate(updatedEvent);
