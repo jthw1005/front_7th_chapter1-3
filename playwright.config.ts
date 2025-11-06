@@ -1,4 +1,10 @@
+// import path from 'path';
+// import { fileURLToPath } from 'url';
+
 import { defineConfig, devices } from '@playwright/test';
+
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
 
 /**
  * Read environment variables from file.
@@ -23,6 +29,9 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
+  /* Global setup and teardown */
+  globalSetup: './src/__tests__/e2e/global-setup.ts',
+  globalTeardown: './src/__tests__/e2e/global-teardown.ts',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */

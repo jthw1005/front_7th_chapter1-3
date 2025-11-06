@@ -1,24 +1,4 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
 import { test, expect } from '@playwright/test';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const scheduleFilePath = path.join(__dirname, '../../__mocks__/response/realEvents.json');
-let originalData: string;
-
-test.beforeAll(async () => {
-  originalData = fs.readFileSync(scheduleFilePath, 'utf-8');
-  console.log('📦 원본 데이터 백업 완료');
-});
-
-test.afterAll(async () => {
-  fs.writeFileSync(scheduleFilePath, originalData);
-  console.log('♻️ 원본 데이터로 복원 완료');
-});
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/');
@@ -56,7 +36,7 @@ test.describe('기본 일정 관리 E2E 테스트', () => {
 
     await page.getByTestId('event-submit-button').click();
 
-    await expect(page.getByRole('alert').nth(0)).toContainText('일정이 추가되었습니다');
+    await expect(page.getByRole('alert').last()).toContainText('일정이 추가되었습니다');
 
     await expect(page.getByTestId('event-list')).toContainText('시훈이 만나기');
   });
@@ -81,8 +61,22 @@ test.describe('기본 일정 관리 E2E 테스트', () => {
 
     await page.getByTestId('event-submit-button').click();
 
-    await expect(page.getByRole('alert').nth(0)).toContainText('일정이 수정되었습니다');
+    await expect(page.getByRole('alert').last()).toContainText('일정이 수정되었습니다');
 
     await expect(page.getByTestId('event-list')).toContainText('테니스 레슨 시간 변경');
+  });
+
+  test('기존 일정을 삭제할 수 있다.', async ({ page }) => {
+    await page
+      .getByTestId('event-list')
+      .locator('div')
+      .filter({ hasText: '삭제될 이벤트' })
+      .getByRole('button', { name: 'Delete event' })
+      .first()
+      .click();
+
+    await expect(page.getByRole('alert').last()).toContainText('일정이 삭제되었습니다');
+
+    await expect(page.getByTestId('event-list')).not.toContainText('삭제될 이벤트');
   });
 });
