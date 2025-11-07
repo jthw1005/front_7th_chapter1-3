@@ -16,8 +16,8 @@ import { useSnackbar } from 'notistack';
 import { useState } from 'react';
 
 import AlertsBox from './components/AlertsBox.tsx';
+import CalendarView from './components/CalendarView.tsx';
 import EventList from './components/EventList.tsx';
-import EventView from './components/EventView.tsx';
 import OverlapEventDialog from './components/OverlapEventDialog.tsx';
 import RecurringEventDialog from './components/RecurringEventDialog.tsx';
 import { notificationOptions } from './constants/notification.ts';
@@ -436,7 +436,7 @@ function App() {
           </Button>
         </Stack>
 
-        <EventView
+        <CalendarView
           currentDate={currentDate}
           filteredEvents={filteredEvents}
           notifiedEvents={notifiedEvents}

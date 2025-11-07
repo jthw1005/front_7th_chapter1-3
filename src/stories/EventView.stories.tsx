@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import EventView from '../components/EventView';
+import CalendarView from '../components/CalendarView';
 import { Event } from '../types';
 
 const meta = {
-  component: EventView,
-  title: 'EventView',
+  component: CalendarView,
+  title: 'CalendarView',
   tags: ['autodocs'],
-} satisfies Meta<typeof EventView>;
+} satisfies Meta<typeof CalendarView>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
